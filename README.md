@@ -24,6 +24,24 @@ uvicorn app.main:app --reload
 
 Open `http://localhost:8000/docs` for interactive API documentation. Add an OpenAI API key to enable GPT-5 questions and scorecards. See [Firebase setup](docs/FIREBASE_SETUP.md) before enabling authentication.
 
+## Run the complete app locally
+
+Open two terminals:
+
+```powershell
+# Terminal 1
+cd backend
+python -m uvicorn app.main:app --reload
+
+# Terminal 2
+cd frontend
+Copy-Item .env.example .env
+npm ci
+npm run dev
+```
+
+Open the URL shown by Vite (normally `http://localhost:5173`). With no Firebase variables, the app uses a local demo sign-in so you can test the complete interview flow immediately. With no OpenAI key, it returns a clearly labelled local demo scorecard. Add the Firebase and OpenAI environment values to use the production integrations.
+
 ## Data model
 
 Firebase users own interview history. Each interview has many answers and one saved scorecard. The local default is SQLite; configure `DATABASE_URL` to use a managed database in production.
