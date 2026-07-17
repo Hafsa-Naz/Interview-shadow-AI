@@ -30,22 +30,54 @@ class InterviewAI:
             skills = candidate.get("skills") or [candidate.get("role", "your role")]
             resume = candidate.get("resume_context") or ""
             project = candidate.get("project_context") or ""
+            last_answer = transcript[-1].get("answer", "") if transcript else ""
+            answer_reference = " ".join(last_answer.split()[:12])
             if question_number == 1:
                 reference = project or resume or f"your experience with {skills[0]}"
                 question = f"Give me a concise overview of {reference}. What was the problem, what was your individual role, and how did you measure success?"
                 focus = "resume evidence and individual ownership"
-            elif transcript and len(transcript[-1].get("answer", "").split()) < 35:
-                question = "Your answer is too high-level. Name one decision you personally made, the alternative you rejected, and the measurable result."
+            elif question_number == 2 and len(last_answer.split()) < 25:
+                question = f'You said "{answer_reference}". That is not enough evidence. Name your specific action, the alternative you rejected, and the measurable result.'
                 focus = "evidence, trade-offs, and impact"
             elif question_number == 2:
-                question = f"On the project you described, walk me through the architecture. Where did {skills[0]} create the biggest constraint, and what trade-off did you make?"
-                focus = "project technical depth"
+                question = "What did you personally own in that work? Separate your decisions from the team’s decisions and quantify the outcome."
+                focus = "individual ownership"
             elif question_number == 3:
-                question = f"You are owning a {candidate.get('role', 'technical')} system and its key metric drops 20%. What data do you inspect first, what do you change, and how do you know the fix worked?"
-                focus = "role-specific problem solving"
+                question = f"Walk me through the architecture of that project. Where did {skills[0]} create the biggest constraint?"
+                focus = "project architecture"
             elif question_number == 4:
+                question = "What important trade-off did you make? Explain the options, why you rejected one, and what it cost."
+                focus = "technical trade-offs"
+            elif question_number == 5:
+                question = "Tell me about a decision in that project that did not work. How did you discover it, correct it, and prevent a repeat?"
+                focus = "failure and learning"
+            elif question_number == 6:
+                question = f"Explain one {skills[0]} concept you relied on in your work. Do not give a definition—explain how it changed a design decision."
+                focus = "technical foundations"
+            elif question_number == 7:
+                question = f"Design a scalable version of this project for ten times the traffic. Start with requirements, then describe the components and bottlenecks."
+                focus = "system design"
+            elif question_number == 8:
+                question = "Your service latency has doubled after a release. What is your investigation order, and what metric would prove the fix?"
+                focus = "reliability and performance"
+            elif question_number == 9:
+                question = "Describe the hardest bug you debugged. What hypothesis did you test first, what evidence changed your mind, and what was the root cause?"
+                focus = "debugging discipline"
+            elif question_number == 10:
+                question = f"You are owning a {candidate.get('role', 'technical')} system and its key metric drops 20%. What data do you inspect first, what do you change, and how do you know the fix worked?"
+                focus = "product and user judgment"
+            elif question_number == 11:
+                question = "Give an example of working with people outside your function. How did you make the decision understandable and get alignment?"
+                focus = "cross-functional collaboration"
+            elif question_number == 12:
                 question = "Describe a time you disagreed with a teammate on a high-stakes decision. What evidence did you bring, how did you resolve it, and what was the outcome?"
-                focus = "collaboration under ambiguity"
+                focus = "constructive disagreement"
+            elif question_number == 13:
+                question = "You have three urgent requests and capacity for one. How do you prioritise, communicate the decision, and handle the disappointed stakeholders?"
+                focus = "ambiguity and prioritisation"
+            elif question_number == 14:
+                question = "What is a difficult skill you had to learn recently? Show how you identified the gap and turned it into better work."
+                focus = "learning and growth"
             else:
                 question = "What is the strongest concern a hiring committee should have after this interview, and what evidence from your work would address it?"
                 focus = "self-awareness and ownership"

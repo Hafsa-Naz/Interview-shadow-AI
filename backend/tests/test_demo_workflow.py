@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.services import ai
 
 
 def test_demo_interview_workflow(monkeypatch):
@@ -21,3 +22,11 @@ def test_demo_interview_workflow(monkeypatch):
         scorecard = client.post(f"/api/v1/interviews/{question['interview_id']}/scorecard")
         assert scorecard.status_code == 200
         assert scorecard.json()["scorecard"]["overall_score"] >= 55
+
+
+def test_demo_questions_are_distinct_across_fifteen_rounds(monkeypatch):
+    monkeypatch.setenv("DEMO_MODE", "true")
+    candidate = {"role": "Backend Engineer", "skills": ["Python"], "resume_context": "Built an API", "project_context": "Order platform"}
+    transcript = [{"answer": "I owned the API architecture, chose PostgreSQL over a document database, measured latency and improved reliability through monitoring and testing."}]
+    questions = [ai.next_question(candidate, transcript, number)["question"] for number in range(1, 16)]
+    assert len(set(questions)) == 15
