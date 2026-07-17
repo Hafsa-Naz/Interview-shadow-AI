@@ -2,11 +2,8 @@
 import os
 from dataclasses import dataclass
 
-import firebase_admin
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from firebase_admin import auth as firebase_auth
-from firebase_admin import credentials
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -27,6 +24,11 @@ def _firebase_enabled() -> bool:
 
 
 def _firebase_app():
+    try:
+        import firebase_admin
+        from firebase_admin import credentials
+    except ImportError as exc:
+        raise RuntimeError("Firebase Admin SDK is not installed; run pip install -r requirements.txt") from exc
     if firebase_admin._apps:
         return firebase_admin.get_app()
     service_account_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH")
@@ -44,6 +46,7 @@ def current_user(
     if token is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="A Firebase ID token is required")
     try:
+        from firebase_admin import auth as firebase_auth
         claims = firebase_auth.verify_id_token(token.credentials, app=_firebase_app())
     except Exception as exc:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired Firebase ID token") from exc
