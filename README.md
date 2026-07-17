@@ -40,7 +40,7 @@ npm ci
 npm run dev
 ```
 
-Open the URL shown by Vite (normally `http://localhost:5173`). With no Firebase variables, the app uses a local demo sign-in so you can test the complete interview flow immediately. With no OpenAI key, it returns a clearly labelled local demo scorecard. Add the Firebase and OpenAI environment values to use the production integrations.
+Open the URL shown by Vite (normally `http://localhost:5173`). With no Firebase variables, the app uses a local demo sign-in. To generate genuinely adaptive interview questions from each answer, add `OPENAI_API_KEY` to `backend/.env` and restart the backend. Template questions are available only when `DEMO_MODE=true` is explicitly set; they are not the default interview experience.
 
 ## Data model
 

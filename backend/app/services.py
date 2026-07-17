@@ -26,7 +26,7 @@ class InterviewAI:
         return json.loads(response.output_text)
 
     def next_question(self, candidate: dict, transcript: list[dict], question_number: int) -> dict:
-        if not self.client and os.getenv("DEMO_MODE", "true").lower() == "true":
+        if not self.client and os.getenv("DEMO_MODE", "false").lower() == "true":
             skills = candidate.get("skills") or [candidate.get("role", "your role")]
             resume = candidate.get("resume_context") or ""
             project = candidate.get("project_context") or ""
@@ -86,7 +86,7 @@ class InterviewAI:
         return self._json_response(QUESTION_SYSTEM_PROMPT, json.dumps(payload))
 
     def scorecard(self, candidate: dict, transcript: list[dict]) -> Scorecard:
-        if not self.client and os.getenv("DEMO_MODE", "true").lower() == "true":
+        if not self.client and os.getenv("DEMO_MODE", "false").lower() == "true":
             lengths = [len(item["answer"].split()) for item in transcript]
             average_length = sum(lengths) / len(lengths)
             technical = min(90, max(55, int(60 + average_length)))
