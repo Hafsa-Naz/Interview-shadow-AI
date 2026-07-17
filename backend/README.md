@@ -15,6 +15,12 @@ uvicorn app.main:app --reload
 
 Set `OPENAI_API_KEY` in `.env`. Interactive documentation is at `http://localhost:8000/docs`.
 
+## Authentication and persistence
+
+SQLite is used locally and the API creates its tables at startup. Users are authenticated with Firebase ID tokens when `FIREBASE_AUTH_REQUIRED=true`; authenticated interviews are stored under the Firebase UID and cannot be accessed by another user. See `../docs/FIREBASE_SETUP.md` for the Firebase Console and frontend configuration.
+
+Each generated scorecard is saved to the `scorecards` table, so interview history includes answers and feedback. The reference SQLite DDL is in `../database/schema.sql`.
+
 ## API endpoints
 
 | Action | Endpoint |
