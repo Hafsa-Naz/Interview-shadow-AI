@@ -15,9 +15,20 @@ async def lifespan(_: FastAPI):
     # original hackathon database usable after the authentication update.
     if engine.url.get_backend_name() == "sqlite" and "interviews" in inspect(engine).get_table_names():
         columns = {column["name"] for column in inspect(engine).get_columns("interviews")}
-        if "user_id" not in columns:
+        missing_columns = {
+            "user_id": "VARCHAR(128)",
+            "resume_context": "TEXT DEFAULT ''",
+            "project_context": "TEXT DEFAULT ''",
+        }
+        for column, definition in missing_columns.items():
+            if column not in columns:
+                with engine.begin() as connection:
+                    connection.execute(text(f"ALTER TABLE interviews ADD COLUMN {column} {definition}"))
+    if engine.url.get_backend_name() == "sqlite" and "scorecards" in inspect(engine).get_table_names():
+        scorecard_columns = {column["name"] for column in inspect(engine).get_columns("scorecards")}
+        if "hiring_recommendation" not in scorecard_columns:
             with engine.begin() as connection:
-                connection.execute(text("ALTER TABLE interviews ADD COLUMN user_id VARCHAR(128)"))
+                connection.execute(text("ALTER TABLE scorecards ADD COLUMN hiring_recommendation VARCHAR(30) DEFAULT 'Insufficient evidence'"))
     Base.metadata.create_all(bind=engine)
     yield
 

@@ -28,15 +28,27 @@ class InterviewAI:
     def next_question(self, candidate: dict, transcript: list[dict], question_number: int) -> dict:
         if not self.client and os.getenv("DEMO_MODE", "true").lower() == "true":
             skills = candidate.get("skills") or [candidate.get("role", "your role")]
+            resume = candidate.get("resume_context") or ""
+            project = candidate.get("project_context") or ""
             if question_number == 1:
-                question = f"Tell me about a project where you used {skills[0]}. What problem did you solve and what was your contribution?"
-                focus = "project experience"
-            elif transcript and len(transcript[-1].get("answer", "").split()) < 25:
-                question = f"Could you give a more specific example, including the technical decisions you made using {skills[0]}?"
-                focus = "depth and clarity"
+                reference = project or resume or f"your experience with {skills[0]}"
+                question = f"Give me a concise overview of {reference}. What was the problem, what was your individual role, and how did you measure success?"
+                focus = "resume evidence and individual ownership"
+            elif transcript and len(transcript[-1].get("answer", "").split()) < 35:
+                question = "Your answer is too high-level. Name one decision you personally made, the alternative you rejected, and the measurable result."
+                focus = "evidence, trade-offs, and impact"
+            elif question_number == 2:
+                question = f"On the project you described, walk me through the architecture. Where did {skills[0]} create the biggest constraint, and what trade-off did you make?"
+                focus = "project technical depth"
+            elif question_number == 3:
+                question = f"You are owning a {candidate.get('role', 'technical')} system and its key metric drops 20%. What data do you inspect first, what do you change, and how do you know the fix worked?"
+                focus = "role-specific problem solving"
+            elif question_number == 4:
+                question = "Describe a time you disagreed with a teammate on a high-stakes decision. What evidence did you bring, how did you resolve it, and what was the outcome?"
+                focus = "collaboration under ambiguity"
             else:
-                question = f"For a {candidate.get('role', 'technical')} role, how would you approach improving reliability or performance in a system using {skills[0]}?"
-                focus = "technical problem solving"
+                question = "What is the strongest concern a hiring committee should have after this interview, and what evidence from your work would address it?"
+                focus = "self-awareness and ownership"
             return {"question": question, "focus_area": focus}
         payload = {"candidate": candidate, "previous_q_and_a": transcript, "next_question_number": question_number}
         return self._json_response(QUESTION_SYSTEM_PROMPT, json.dumps(payload))
@@ -52,8 +64,9 @@ class InterviewAI:
             return Scorecard(
                 overall_score=overall, communication=communication, technical_knowledge=technical, confidence=confidence,
                 strengths=["Completed every interview response", "Provided relevant technical detail"],
-                areas_to_improve=["Use concrete metrics to describe impact", "Structure behavioural answers with the STAR method"],
-                summary="Demo scorecard generated locally. Add an OpenAI API key for GPT-5 feedback tailored to the complete transcript.",
+                areas_to_improve=["Use concrete metrics to describe impact", "State your individual contribution and rejected alternatives"],
+                summary="Demo scorecard generated locally. The recommendation is conservative because this mode cannot deeply evaluate the full transcript. Add an OpenAI API key for GPT-5 feedback tailored to the complete transcript.",
+                hiring_recommendation="Insufficient evidence",
             )
         return Scorecard.model_validate(self._json_response(SCORECARD_SYSTEM_PROMPT, json.dumps({"candidate": candidate, "interview_transcript": transcript})))
 

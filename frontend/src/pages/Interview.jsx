@@ -10,6 +10,8 @@ function Interview() {
   const [role, setRole] = useState("");
   const [seniority, setSeniority] = useState("mid");
   const [skills, setSkills] = useState("");
+  const [resumeContext, setResumeContext] = useState(() => localStorage.getItem("resume-context") || "");
+  const [projectContext, setProjectContext] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,7 +21,7 @@ function Interview() {
     try {
       const firstQuestion = await startInterview({
         candidate_name: user?.email?.split("@")[0] || "Candidate", role, seniority,
-        skills: skills.split(",").map((item) => item.trim()).filter(Boolean),
+        skills: skills.split(",").map((item) => item.trim()).filter(Boolean), resume_context: resumeContext, project_context: projectContext,
       });
       navigate("/session", { state: { ...firstQuestion, role } });
     } catch (err) {
@@ -36,6 +38,8 @@ function Interview() {
         <label className="text-gray-300 block">Job Role<input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Backend Engineer" className="mt-2 w-full bg-slate-800 border border-gray-700 rounded-xl p-4 text-white outline-none focus:border-purple-500" /></label>
         <label className="text-gray-300 block">Experience Level<select value={seniority} onChange={(e) => setSeniority(e.target.value)} className="mt-2 w-full bg-slate-800 border border-gray-700 rounded-xl p-4 text-white outline-none focus:border-purple-500"><option value="junior">Junior</option><option value="mid">Mid-level</option><option value="senior">Senior</option></select></label>
         <label className="text-gray-300 block">Skills<input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Python, FastAPI, SQL" className="mt-2 w-full bg-slate-800 border border-gray-700 rounded-xl p-4 text-white outline-none focus:border-purple-500" /></label>
+        <label className="text-gray-300 block">Resume highlights<textarea value={resumeContext} onChange={(e) => setResumeContext(e.target.value)} placeholder="Paste your experience, achievements, technologies, and measurable results." rows="4" className="mt-2 w-full bg-slate-800 border border-gray-700 rounded-xl p-4 text-white outline-none focus:border-purple-500 resize-y" /></label>
+        <label className="text-gray-300 block">Project to challenge you on<textarea value={projectContext} onChange={(e) => setProjectContext(e.target.value)} placeholder="Project name, the problem, architecture, your contribution, trade-offs, and outcome." rows="4" className="mt-2 w-full bg-slate-800 border border-gray-700 rounded-xl p-4 text-white outline-none focus:border-purple-500 resize-y" /></label>
         <Button className="w-full mt-4" onClick={handleStart}>{loading ? "Preparing interview..." : "Start AI Interview"}</Button>
       </div>
     </div>

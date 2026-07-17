@@ -22,7 +22,7 @@ def interview_or_404(interview_id: str, db: Session, user: CurrentUser | None) -
 
 
 def candidate(interview: Interview) -> dict:
-    return {"name": interview.candidate_name, "role": interview.role, "seniority": interview.seniority, "skills": interview.skills}
+    return {"name": interview.candidate_name, "role": interview.role, "seniority": interview.seniority, "skills": interview.skills, "resume_context": interview.resume_context, "project_context": interview.project_context}
 
 
 def transcript(interview: Interview) -> list[dict]:

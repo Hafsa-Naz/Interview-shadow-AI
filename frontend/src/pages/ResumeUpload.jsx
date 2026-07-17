@@ -8,6 +8,7 @@ function ResumeUpload() {
 
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
+  const [resumeContext, setResumeContext] = useState(() => localStorage.getItem("resume-context") || "");
 
   const handleFile = (e) => {
     const selectedFile = e.target.files[0];
@@ -30,12 +31,11 @@ function ResumeUpload() {
   };
 
   const handleContinue = () => {
-    if (!file) {
-      setError("Please upload your resume first.");
+    if (!file && !resumeContext.trim()) {
+      setError("Upload a resume or paste the key details below.");
       return;
     }
-
-    // Backend upload will be added later
+    localStorage.setItem("resume-context", resumeContext);
     navigate("/interview");
   };
 
@@ -95,6 +95,8 @@ function ResumeUpload() {
             {error}
           </div>
         )}
+
+        <label className="text-gray-300 block mt-6">Paste resume highlights for a tailored interview<textarea value={resumeContext} onChange={(e) => setResumeContext(e.target.value)} rows="5" placeholder="Include roles, projects, technologies, impact metrics, and key achievements." className="mt-2 w-full bg-slate-800 border border-gray-700 rounded-xl p-4 text-white outline-none focus:border-purple-500 resize-y" /></label>
 
         <Button
           className="w-full mt-8"
