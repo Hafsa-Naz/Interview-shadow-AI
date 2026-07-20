@@ -11,6 +11,12 @@ An adaptive technical-interview practice app with React, FastAPI, Firebase Authe
 | `database/` | SQLite reference schema |
 | `docs/` | Firebase setup and testing report |
 
+## OpenAI Build Week: Codex and GPT-5.6 usage
+
+OpenAI Codex was used throughout development to scaffold the React and FastAPI integration, review and improve the interview workflow, diagnose local API and deployment issues, refine the answer-quality scoring logic, and create the detailed scorecard feedback experience.
+
+GPT-5.6 was used through Codex as a development collaborator for code generation, debugging, documentation improvements, and structured prompt design. The application itself supports GPT-powered adaptive questions and scorecards when an `OPENAI_API_KEY` with available quota is configured; a local demo mode is included for reliable end-to-end demonstrations without API quota.
+
 ## Quick start
 
 ```powershell
