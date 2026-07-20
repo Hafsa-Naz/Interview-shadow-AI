@@ -22,6 +22,9 @@ def test_demo_interview_workflow(monkeypatch):
         scorecard = client.post(f"/api/v1/interviews/{question['interview_id']}/scorecard")
         assert scorecard.status_code == 200
         assert 25 <= scorecard.json()["scorecard"]["overall_score"] <= 90
+        detailed_feedback = scorecard.json()["scorecard"]["detailed_feedback"]
+        assert len(detailed_feedback) == 3
+        assert {item["category"] for item in detailed_feedback} == {"Communication", "Technical Knowledge", "Confidence"}
 
 
 def test_demo_questions_are_distinct_across_fifteen_rounds(monkeypatch):

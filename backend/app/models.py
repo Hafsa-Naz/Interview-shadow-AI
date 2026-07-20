@@ -53,5 +53,6 @@ class Scorecard(Base):
     strengths: Mapped[list] = mapped_column(JSON, default=list)
     summary: Mapped[str] = mapped_column(Text)
     hiring_recommendation: Mapped[str] = mapped_column(String(30), default="Insufficient evidence")
+    detailed_feedback: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     interview: Mapped[Interview] = relationship(back_populates="scorecard")

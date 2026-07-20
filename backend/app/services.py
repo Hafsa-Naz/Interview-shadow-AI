@@ -126,11 +126,20 @@ class InterviewAI:
             if outcome_hits < 2:
                 areas_to_improve.append("Use metrics or concrete results to prove impact")
             recommendation = "Strong hire" if overall >= 85 else "Hire" if overall >= 70 else "No hire" if overall >= 45 else "Strong no hire"
+            technical_evidence = "You named relevant technical concepts such as " + ", ".join([term for term in technical_terms if term in combined][:4]) + "." if technical_hits else "Your answers stayed high-level and did not name enough technical decisions, constraints, or validation steps."
+            communication_evidence = f"{len(answers) - concise_answers} of {len(answers)} answers gave enough detail to explain an action or result."
+            confidence_evidence = "Vague or uncertain wording appeared in your answers." if vague_hits else "Your answers were generally direct and decisive."
+            detailed_feedback = [
+                {"category": "Communication", "assessment": "Your communication was structured and outcome-focused." if communication >= 70 else "Your answers need a clearer situation, action, and result structure.", "evidence": communication_evidence, "next_step": "For each answer, use: context, your action, the decision or trade-off, and a measurable result."},
+                {"category": "Technical Knowledge", "assessment": "You demonstrated credible technical depth." if technical >= 70 else "Technical depth was not consistently supported with implementation details.", "evidence": technical_evidence, "next_step": "Name the component you built, the constraint, the alternative you rejected, and how you tested the result."},
+                {"category": "Confidence", "assessment": "You showed clear ownership of your decisions." if confidence >= 70 else "Your delivery weakened when ownership or certainty was unclear.", "evidence": confidence_evidence, "next_step": "Replace vague phrases with a direct statement of what you owned, why you chose it, and what happened next."},
+            ]
             return Scorecard(
                 overall_score=overall, communication=communication, technical_knowledge=technical, confidence=confidence,
                 strengths=strengths, areas_to_improve=areas_to_improve,
                 summary="Demo scorecard generated from technical evidence, ownership, outcomes, clarity, and vague-answer signals. Use GPT-5 mode for deeper transcript-specific feedback.",
                 hiring_recommendation=recommendation,
+                detailed_feedback=detailed_feedback,
             )
         return Scorecard.model_validate(self._json_response(SCORECARD_SYSTEM_PROMPT, json.dumps({"candidate": candidate, "interview_transcript": transcript})))
 

@@ -29,6 +29,9 @@ async def lifespan(_: FastAPI):
         if "hiring_recommendation" not in scorecard_columns:
             with engine.begin() as connection:
                 connection.execute(text("ALTER TABLE scorecards ADD COLUMN hiring_recommendation VARCHAR(30) DEFAULT 'Insufficient evidence'"))
+        if "detailed_feedback" not in scorecard_columns:
+            with engine.begin() as connection:
+                connection.execute(text("ALTER TABLE scorecards ADD COLUMN detailed_feedback JSON DEFAULT '[]'"))
     Base.metadata.create_all(bind=engine)
     yield
 
