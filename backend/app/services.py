@@ -21,7 +21,7 @@ class InterviewAI:
             response = self.client.responses.create(
                 model=MODEL,
                 instructions=instructions,
-                input=prompt,
+                input=f"Return JSON only.\n{prompt}",
                 text={"format": {"type": "json_object"}},
             )
         except AuthenticationError as exc:
