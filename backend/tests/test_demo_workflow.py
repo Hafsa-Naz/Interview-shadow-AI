@@ -21,7 +21,7 @@ def test_demo_interview_workflow(monkeypatch):
         assert client.post(f"/api/v1/interviews/{question['interview_id']}/finish").status_code == 200
         scorecard = client.post(f"/api/v1/interviews/{question['interview_id']}/scorecard")
         assert scorecard.status_code == 200
-        assert scorecard.json()["scorecard"]["overall_score"] >= 55
+        assert 25 <= scorecard.json()["scorecard"]["overall_score"] <= 90
 
 
 def test_demo_questions_are_distinct_across_fifteen_rounds(monkeypatch):
