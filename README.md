@@ -1,12 +1,12 @@
 # Interview Shadow AI
 
-An adaptive technical-interview practice app. The FastAPI backend uses GPT-5 to create follow-up questions and structured scorecards, while Firebase Authentication identifies each candidate.
+An adaptive technical-interview practice app with React, FastAPI, Firebase Authentication, SQLite, GPT-5 support, a 15-question interview flow, and detailed scorecard feedback.
 
 ## Repository layout
 
 | Folder | Purpose |
 | --- | --- |
-| `frontend/` | React and Tailwind client (to be added from the frontend branch) |
+| `frontend/` | React and Tailwind client, interview workflow, and scorecard UI |
 | `backend/` | FastAPI API, GPT-5 prompts, and persistence models |
 | `database/` | SQLite reference schema |
 | `docs/` | Firebase setup and testing report |
